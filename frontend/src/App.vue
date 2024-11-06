@@ -2,16 +2,22 @@
   <div>
     <h1>Geo-Data App</h1>
     <MapComponent />
+    <LoginPage/>
+    <SignupPage/>
   </div>
 </template>
 
 <script>
+import LoginPage from './components/LoginPage.vue';
+import SignupPage from './components/SignupPage.vue';
 import MapComponent from './components/MapComponent.vue';
 
 export default {
   name: 'App',
   components: {
-    MapComponent
+    MapComponent,
+    LoginPage,
+    SignupPage
   },
   data() {
     return {

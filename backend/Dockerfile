@@ -16,7 +16,8 @@ COPY . .
 # Expose the port your app will run on
 EXPOSE 3000
 
-# Start the server
-CMD ["npx", "nodemon", "--watch", ".", "--exec", "node", "index.js"]
+# Install nodemon globally if not in dev dependencies
+RUN npm install -g nodemon
 
-
+# Run the app with nodemon using the defined script
+CMD ["npm", "run", "dev"]

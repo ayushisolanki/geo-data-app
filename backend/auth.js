@@ -1,7 +1,7 @@
 const express = require('express');
 const bcrypt = require('bcrypt');
 const jwt = require('jsonwebtoken');
-const knex = require('./knex');
+const knex = require('./knexfile');
 
 const app = express();
 app.use(express.json());
