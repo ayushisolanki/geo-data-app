@@ -1,9 +1,11 @@
 <template>
   <div>
     <h1>Geo-Data App</h1>
-    <MapComponent />
+    <FileUpload @fileUploaded="onFileUploaded"/>
+    <MapComponent :fileUrl="fileUrl"/>
     <LoginPage/>
     <SignupPage/>
+
   </div>
 </template>
 
@@ -11,18 +13,20 @@
 import LoginPage from './components/LoginPage.vue';
 import SignupPage from './components/SignupPage.vue';
 import MapComponent from './components/MapComponent.vue';
+import FileUpload from "./components/FileUpload.vue"
 
 export default {
   name: 'App',
   components: {
     MapComponent,
     LoginPage,
-    SignupPage
+    SignupPage, 
+    FileUpload
   },
   data() {
     return {
       message: "Waiting for API response...",
-      results:[],
+      fileUrl: "",
     };
   },
   methods: {
@@ -37,16 +41,9 @@ export default {
       }
     },
 
-    async fetchSearchResults(query) {
-      console.log("fetchSearchResults called")
-      try {
-        const response = await fetch(`http://localhost:3000/api/search?q=${encodeURIComponent(query)}`);
-        const data = await response.json();
-        console.log("Search Results:", data.results);
-        this.results= data.results;
-      } catch (error) {
-        console.error("Error fetching search results:", error);
-      }
+    onFileUploaded(fileUrl) {
+      console.log({fileUrl})
+      this.fileUrl = fileUrl;  // Update file URL when a file is uploaded
     },
 
   },

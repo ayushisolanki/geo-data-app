@@ -7,8 +7,12 @@ import mapboxgl from 'mapbox-gl';
 import MapboxDraw from '@mapbox/mapbox-gl-draw';
 import 'mapbox-gl/dist/mapbox-gl.css';
 import '@mapbox/mapbox-gl-draw/dist/mapbox-gl-draw.css';
+import axios from 'axios';
 
 export default {
+  props: {
+    fileUrl: String,  // Receive the file URL as a prop
+  },
   data() {
     return {
       map: null,
@@ -16,6 +20,7 @@ export default {
     };
   },
   mounted() {
+    //todo: move to env
     mapboxgl.accessToken = "pk.eyJ1IjoiYXl1c2hpc29sYW5raSIsImEiOiJjbTJveW96bnEwZGR6MmpyMTFjNHY5d3B0In0.9dC4tZh9BnYovyyR12zRvA"
     this.map = new mapboxgl.Map({
       container: this.$refs.map,
@@ -38,7 +43,10 @@ export default {
 this.map.on('draw.update', this.onDrawUpdate);
 this.map.on('draw.delete', this.onDrawDelete);
 
+if (this.fileUrl) {
 
+      this.loadGeoJSON(this.fileUrl);
+    }
 
   },
   beforeUnmount() {
@@ -46,7 +54,14 @@ this.map.on('draw.delete', this.onDrawDelete);
   // this.map.off('draw.update', this.onDrawUpdate);
   // this.map.off('draw.delete', this.onDrawDelete);
 },
-
+watch: {
+    fileUrl(newUrl) {
+      console.log("file...", newUrl)
+      if (newUrl) {
+        this.loadGeoJSON(newUrl);  // Watch for changes in file URL
+      }
+    },
+  },
   methods: {
   onDrawCreate(event) {
     const data = event.features;
@@ -64,6 +79,32 @@ this.map.on('draw.delete', this.onDrawDelete);
     console.log('Shapes deleted:', event.features);
     // Handle deleted shapes
   },
+
+  async loadGeoJSON(url) {
+    console.log("checkpoint A")
+      try {
+        console.log("checkpoint 1", url)
+        const response = await axios.get(`http://localhost:3000/api/files/file/${url}`);
+        console.log("checkpoint 2", response)
+        this.map.addSource('geojson-source', {
+          type: 'geojson',
+          data: response.data,
+        });
+        console.log("checkpoint 3")
+        this.map.addLayer({
+          id: 'geojson-layer',
+          type: 'fill',
+          source: 'geojson-source',
+          paint: {
+            'fill-color': 'red',
+            'fill-opacity': 0.8,
+          },
+        });
+        console.log("checkpoint 4")
+      } catch (error) {
+        console.error('Error loading GeoJSON', error);
+      }
+    },
 },
 
 };
